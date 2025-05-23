@@ -1,0 +1,178 @@
+{
+	"info": {
+		"_postman_id": "dceb9349-d8b4-43f8-94fe-1c5f45cbb7dd",
+		"name": "technicalKLG API Automation",
+		"description": "Automation for POST, GET, PUT user from Swagger Petstore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1421817",
+		"_collection_link": "https://warped-crescent-184785.postman.co/workspace/dc62dad2-bdc9-4926-917c-09714b737de2/collection/1421817-dceb9349-d8b4-43f8-94fe-1c5f45cbb7dd?action=share&source=collection_link&creator=1421817"
+	},
+	"item": [
+		{
+			"name": "POST Create User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let randomUser = \"user_\" + Math.random().toString(36).substring(2, 8);",
+							"let firstName = \"FN_\" + Math.random().toString(36).substring(2, 5);",
+							"let lastName = \"LN_\" + Math.random().toString(36).substring(2, 5);",
+							"",
+							"pm.environment.set(\"username\", randomUser);",
+							"pm.environment.set(\"firstName\", firstName);",
+							"pm.environment.set(\"lastName\", lastName);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 0,\n    \"username\": \"{{username}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"lastName\": \"{{lastName}}\",\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\",\n    \"phone\": \"1234567890\",\n    \"userStatus\": 1\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET User by Username",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Delay execution to allow user creation to propagate",
+							"setTimeout(function() {}, 30000);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"let jsonData = pm.response.json();",
+							"pm.test(\"First name is correct\", function () {",
+							"    pm.expect(jsonData.firstName).to.eql(pm.environment.get(\"firstName\"));",
+							"});",
+							"pm.test(\"Last name is correct\", function () {",
+							"    pm.expect(jsonData.lastName).to.eql(pm.environment.get(\"lastName\"));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/user/{{username}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"{{username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Update User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Delay to ensure GET verification has completed",
+							"setTimeout(function() {}, 1500);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// pm.sendRequest({",
+							"//     url: pm.environment.get(\"baseUrl\") + \"/user/\" + pm.environment.get(\"username\"),",
+							"//     method: 'GET'",
+							"// }, function (err, res) {",
+							"//     let jsonData = res.json();",
+							"//     pm.test(\"First name is updated to Jane\", function () {",
+							"//         pm.expect(jsonData.firstName).to.eql(\"Jane\");",
+							"//     });",
+							"// });"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 0,\n    \"username\": \"{{username}}\",\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Doe\",\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\",\n    \"phone\": \"1234567890\",\n    \"userStatus\": 1\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/{{username}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"{{username}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
